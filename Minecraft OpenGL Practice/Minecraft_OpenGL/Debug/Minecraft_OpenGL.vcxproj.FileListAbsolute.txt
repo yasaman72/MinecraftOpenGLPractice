@@ -1,0 +1,4 @@
+E:\CGL\BA6\Programming\Minecraft OpenGL Practice\Minecraft_OpenGL\Debug\Minecraft_OpenGL.exe
+E:\CGL\BA6\Programming\Minecraft OpenGL Practice\Minecraft_OpenGL\Debug\Minecraft_OpenGL.pdb
+E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\Debug\Minecraft_OpenGL.exe
+E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\Debug\Minecraft_OpenGL.pdb
