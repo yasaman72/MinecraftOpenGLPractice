@@ -156,9 +156,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Bitmap.cpp" />
+    <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\GLWindow.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
+    <ClCompile Include="src\PerlinNoise.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
   </ItemGroup>
@@ -169,6 +171,8 @@
     <ClInclude Include="src\Bitmap.h" />
     <ClInclude Include="src\GLWindow.h" />
     <ClInclude Include="src\IndexBuffer.h" />
+    <ClInclude Include="src\Input.h" />
+    <ClInclude Include="src\PerlinNoise.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\ShaderParser.h" />
     <ClInclude Include="src\VertexBuffer.h" />

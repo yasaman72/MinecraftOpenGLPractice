@@ -1,0 +1,9 @@
+You should move on the generated map based on height information of the bricks.
+
+There should be a skybox and some moving brick clouds.
+
+Based on mouse movement there should be a possibility to look around.
+
+ 
+
+You can work in groups with up to tree person. There should be an individual documentation of your part of the project.

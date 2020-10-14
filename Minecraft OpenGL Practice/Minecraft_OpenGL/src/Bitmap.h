@@ -17,10 +17,10 @@ public:
 	int								m_nWidth;
 	int								m_nHeight;
 	int								m_nBits;
-	BITMAPINFO* m_pInfo;
-	BITMAP						bm;
-	HBITMAP						phBitmap;
-	Gdiplus::Bitmap* m_pBitmap;
+	BITMAPINFO*						m_pInfo;
+	BITMAP							bm;
+	HBITMAP							phBitmap;
+	Gdiplus::Bitmap*				m_pBitmap;
 
 public:
 	CBitmap();

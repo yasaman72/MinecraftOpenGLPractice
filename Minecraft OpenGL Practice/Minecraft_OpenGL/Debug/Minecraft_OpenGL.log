@@ -1,3 +1,8 @@
 ﻿  main.cpp
-E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(53,264): warning C4305: 'initializing': truncation from 'double' to 'float'
+E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(56,41): warning C4305: 'initializing': truncation from 'double' to 'float'
+E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(232,264): warning C4305: 'initializing': truncation from 'double' to 'float'
+E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(234,267): warning C4305: 'initializing': truncation from 'double' to 'float'
+E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(255,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(256,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(257,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   Minecraft_OpenGL.vcxproj -> E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\Debug\Minecraft_OpenGL.exe
