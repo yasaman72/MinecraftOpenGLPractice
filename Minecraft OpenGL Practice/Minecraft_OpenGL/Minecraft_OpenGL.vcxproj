@@ -177,6 +177,12 @@
     <ClInclude Include="src\ShaderParser.h" />
     <ClInclude Include="src\VertexBuffer.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Bitmap\cube2.jpg" />
+    <Image Include="Bitmap\DaylightBox.png" />
+    <Image Include="Bitmap\ground.png" />
+    <Image Include="Bitmap\skybox.bmp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

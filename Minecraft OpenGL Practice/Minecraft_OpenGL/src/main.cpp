@@ -94,7 +94,7 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 
 int main(void)
 {
-	GLWindow		window(640, 480, "PerlinNoise");
+	GLWindow window(640, 480, "Minecraft Project");
 	if (window.Init() == false) exit(EXIT_FAILURE);
 
 	glfwSetCursorPosCallback(window.m_Window, MousePosCallback);
@@ -104,6 +104,8 @@ int main(void)
 
 	GLuint	cubeTexture;
 	GLfloat aspect = (GLfloat)640 / 480;
+
+	GLfloat angle = 0.0f;
 
 	glClearDepth(1.0);
 	glEnable(GL_DEPTH_TEST);
@@ -215,7 +217,7 @@ int main(void)
 
 	// skybox
 	CBitmap* pSky = new CBitmap();
-	pSky->LoadFromFile("Bitmap/skybox.bmp");
+	pSky->LoadFromFile("Bitmap/DaylightBox.png");
 
 	glGenTextures(1, &skyTexture);
 	glBindTexture(GL_TEXTURE_2D, skyTexture);
@@ -251,13 +253,31 @@ int main(void)
 	while (window.IsRunning()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(45.0, aspect, 3.0, 1000.0);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		gluLookAt(0.0f, 0.8f, 8.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
-		float px = sin(fHor) * cos(fVer);
-		float py = sin(fVer);
-		float pz = cos(fHor) * cos(fVer);
-		gluLookAt(0.0f, 0.0f, 0.0f, px, py, pz, 0.0f, 1.0f, 0.0f);
 
-		// skybox
+		// looking
+		//float px = sin(fHor) * cos(fVer);
+		//float py = sin(fVer);
+		//float pz = cos(fHor) * cos(fVer);
+		//gluLookAt(0.0f, 0.0f, 0.0f, px, py, pz, 0.0f, 1.0f, 0.0f);
+
+
+
+		//glPushMatrix();
+
+		// Assign the Texture
+
+		glPushMatrix();
+		glTranslatef(0.0f, 0.0f, -56.0f);
+		glRotatef(angle, 0.0f, 1.0f, 0.0f);		// Rotate around the y axis
+
+	    // skybox
 		glColor3f(1.0f, 1.0f, 1.0f);
 		glScalef(1100.0f, 1100.0f, 1100.0f);
 		glCullFace(GL_FRONT);
@@ -271,25 +291,31 @@ int main(void)
 		glEnd();
 
 		glScalef(1.0f / 1100.0f, 1.0f / 1100.0f, 1.0f / 1100.0f);
-		// skybox
+		// skybox end
 
-		glPushMatrix();
+		// cube test 
+		glTranslatef(-0.5f, -10.0f, -5.0f);		
+		glColor3f(1.0f, 1.0f, 1.0f);
+		glScalef(10.0f, 10.0f, 10.0f);
+		glCullFace(GL_BACK);
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(45.0, aspect, 3.0, 1000.0);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		glBindTexture(GL_TEXTURE_2D, skyTexture);
+		glBegin(GL_QUADS);
+		for (int i = 0; i < 24; i++) {
+			glTexCoord2f(uvsky[i * 2], uvsky[i * 2 + 1]);
+			glVertex3f(vert[index[i] * 3], vert[index[i] * 3 + 1], vert[index[i] * 3 + 2]);
+		}
 
-		// Assign the Texture
+		glEnd();
+
+		glScalef(1.0f / 10.0f, 1.0f / 10.0f, 1.0f / 10.0f);
+		glTranslatef(0.5f, 10.0f, 5.0f);
+
+		// cube test end
 
 		glEnable(GL_TEXTURE_2D);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 		glBindTexture(GL_TEXTURE_2D, cubeTexture);
-
-		glPushMatrix();
-		glTranslatef(0.0f, 0.0f, -56.0f);
-		// glRotatef(angle, 0.0f, 1.0f, 0.0f);		// Rotate around the y axis
 
 		for (unsigned int x = 0; x < m_nWidth; x++) {
 			for (unsigned int z = 0; z < m_nHeight; z++) {
@@ -306,6 +332,10 @@ int main(void)
 
 		glPopMatrix();
 		glFlush();
+		glTranslatef(-0.5f, -10.0f, 5.0f);
+
+		angle++;
+		//if (angle > 360) angle = 0;
 
 		window.Present();
 	}

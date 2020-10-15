@@ -23,8 +23,8 @@ class GLWindow
 public:
 	int						m_nWidth;
 	int						m_nHeight;
-	std::string		m_strTitle;
-	GLFWwindow* m_Window;
+	std::string				m_strTitle;
+	GLFWwindow*				m_Window;
 
 public:
 	float					m_fAspect;
@@ -37,8 +37,8 @@ public:
 
 	static void ErrorCallback(int error, const char* description);
 	static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 	bool IsRunning(void);
 	void Present(void);
-
 };

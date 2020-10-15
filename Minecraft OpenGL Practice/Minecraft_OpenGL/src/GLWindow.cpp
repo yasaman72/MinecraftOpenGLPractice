@@ -39,6 +39,7 @@ bool GLWindow::Init(void)
 	}
 
 	glfwGetFramebufferSize(m_Window, &m_nWidth, &m_nHeight);
+	glfwSetFramebufferSizeCallback(m_Window, FramebufferSizeCallback);
 	glfwSetKeyCallback(m_Window, KeyCallback);
 
 	glfwMakeContextCurrent(m_Window);
@@ -59,6 +60,18 @@ void GLWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	}
+
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+}
+
+// glfw: whenever the window size changed (by OS or user resize) this callback function executes
+// ---------------------------------------------------------------------------------------------
+void GLWindow::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+	// make sure the viewport matches the new window dimensions; note that width and 
+	// height will be significantly larger than specified on retina displays.
+	glViewport(0, 0, width, height);
 }
 
 bool GLWindow::IsRunning(void)

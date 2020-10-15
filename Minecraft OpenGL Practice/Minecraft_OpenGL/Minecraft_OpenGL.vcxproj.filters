@@ -69,4 +69,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Bitmap\cube2.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Bitmap\DaylightBox.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Bitmap\ground.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Bitmap\skybox.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
