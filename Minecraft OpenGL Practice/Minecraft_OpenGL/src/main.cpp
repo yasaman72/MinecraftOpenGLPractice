@@ -1,9 +1,16 @@
 #include <math.h>
+
+//#include <glm/glm.hpp>
+//#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/gtc/type_ptr.hpp>
+
 #include "GLWindow.h"
 #include "Bitmap.h"
 #include "GL/glew.h"
 #include "PerlinNoise.h"
-#include "Input.h"
+//#include "Shader.h"
+
+#include <iostream>
 
 using namespace std;
 
@@ -99,6 +106,10 @@ int main(void)
 
 	glfwSetCursorPosCallback(window.m_Window, MousePosCallback);
 	glfwSetMouseButtonCallback(window.m_Window, MouseButtonCallback);
+
+	// shader
+	// Shader testShader("res/shaders/Basic.Shader", "res/shaders/Transform.fShader");
+
 
 	GLuint	skyTexture;
 
@@ -251,6 +262,7 @@ int main(void)
 	}
 
 	while (window.IsRunning()) {
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glMatrixMode(GL_PROJECTION);
@@ -294,6 +306,17 @@ int main(void)
 		// skybox end
 
 		// cube test 
+
+		// // create transformations
+		//glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+		//transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+		//transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		//// get matrix's uniform location and set matrix
+		//testShader.use();
+		//unsigned int transformLoc = glGetUniformLocation(testShader.ID, "transform");
+		//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
 		glTranslatef(-0.5f, -10.0f, -5.0f);		
 		glColor3f(1.0f, 1.0f, 1.0f);
 		glScalef(10.0f, 10.0f, 10.0f);
