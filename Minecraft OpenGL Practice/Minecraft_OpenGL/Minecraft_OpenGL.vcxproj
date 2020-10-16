@@ -157,7 +157,6 @@
   <ItemGroup>
     <ClCompile Include="Dependencies\glm includes\glm\detail\glm.cpp" />
     <ClCompile Include="src\Bitmap.cpp" />
-    <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\GLWindow.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
@@ -725,8 +724,6 @@
     <None Include="res\shaders\Transform.fShader" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Dependencies\glad include\glad\glad.h" />
-    <ClInclude Include="Dependencies\glad include\KHR\khrplatform.h" />
     <ClInclude Include="Dependencies\GLEW\include\GL\eglew.h" />
     <ClInclude Include="Dependencies\GLEW\include\GL\glew.h" />
     <ClInclude Include="Dependencies\GLEW\include\GL\glxew.h" />
