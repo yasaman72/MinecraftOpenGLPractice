@@ -12,8 +12,6 @@
 
 using namespace std;
 
-// --------------------------------------------------------------------------------
-
 #define VERTICES		24
 #define INDICES			36
 #define CLOUDAMOUNT		200
@@ -27,7 +25,7 @@ struct MyVertex
 {
 	float x, y, z;        // Vertex
 	float nx, ny, nz;     // Normal
-	float u, v;					// UV
+	float u, v;			  // UV
 };
 
 MyVertex vertex[VERTICES] = {
@@ -63,9 +61,6 @@ MyVertex vertex[VERTICES] = {
 
 
 unsigned short indices[INDICES];
-
-// --------------------------------------------------------------------------------
-
 
 bool	bMouseDown = false;
 double  fStartX;
@@ -108,7 +103,7 @@ void Mouse_Callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
-	float sensitivity = 0.1f; // change this value to your liking
+	float sensitivity = 0.1f;
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;
 
@@ -130,7 +125,7 @@ void Mouse_Callback(GLFWwindow* window, double xpos, double ypos)
 
 void processInput(GLFWwindow* window)
 {
-	const float cameraSpeed = 0.5f; // adjust accordingly
+	const float cameraSpeed = 0.5f; 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		cameraPos += cameraSpeed * cameraFront;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -227,10 +222,7 @@ void DrawSkyBox(GLuint& skyTexture)
 	glPopMatrix();
 }
 
-
-
-
-// --------------------------------------------------------------------------------
+// MAIN =============================================
 
 int main(void)
 {
@@ -250,7 +242,6 @@ int main(void)
 
 	glClearDepth(1.0);
 	glEnable(GL_DEPTH_TEST);
-	//	glEnable(GL_CULL_FACE);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -259,14 +250,13 @@ int main(void)
 	glShadeModel(GL_FLAT);
 
 	// The Texture
-
 	CBitmap* pBitmap = new CBitmap();
 	pBitmap->LoadFromFile("Bitmap/dirt.jpg");
 
 	glGenTextures(1, &cubeTexture);
 	glBindTexture(GL_TEXTURE_2D, cubeTexture);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);					// GL_CLAMP,GL_REPEAT
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);			// GL_CLAMP,GL_REPEAT
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);		// GL_LINEAR
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -276,13 +266,11 @@ int main(void)
 	delete(pBitmap);
 
 	// Create the Vertex Buffer Object
-
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(MyVertex) * VERTICES, &vertex[0].x, GL_STATIC_DRAW);
 
 	// Create the Index Buffer Object
-
 	indices[0] = 0;			// front
 	indices[1] = 1;
 	indices[2] = 2;
@@ -330,7 +318,6 @@ int main(void)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * INDICES, indices, GL_STATIC_DRAW);
 
 	// Describe the structur of a vertex
-
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(MyVertex), BUFFER_OFFSET(0));    // The starting point of the VBO, for the vertices
@@ -346,9 +333,7 @@ int main(void)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	// Generation of a map via PerlinNoise
-
 	// Define the dimension of the grid
-
 	unsigned int m_nWidth = 200;
 	unsigned int m_nHeight = 200;
 
@@ -394,7 +379,6 @@ int main(void)
 
 
 	// Fill the grid with values from the noise function
-
 	for (unsigned int i = 0; i < m_nHeight; ++i) {     // y
 		for (unsigned int j = 0; j < m_nWidth; ++j) {  // x
 			double x = (double)j / ((double)m_nWidth);
@@ -425,8 +409,6 @@ int main(void)
 
 		
 		processInput(window.m_Window);
-
-		//gluLookAt(-cameraX, 0.0f, -cameraZ, px, py, pz, 0.0f, 1.0f, 0.0f);
 		gluLookAt(cameraPos.x, cameraPos.y, cameraPos.z, (cameraFront + cameraPos).x, (cameraFront + cameraPos).y, (cameraFront + cameraPos).z, cameraUp.x, cameraUp.y, cameraUp.z);
 
 
@@ -437,7 +419,7 @@ int main(void)
 		DrawGound(cubeTexture, m_nWidth, m_nHeight, m_pData);
 
 
-		// rendering transparent objects ======
+		// rendering transparent objects ====================
 		// cloud
 		for (int x = 0; x < CLOUDAMOUNT; x++)
 		{
@@ -450,7 +432,6 @@ int main(void)
 
 		angle++;
 		cloudXPosMultiplier += 0.05f;
-		//if (angle > 360) angle = 0;
 
 		Sleep(30);
 		window.Present();
