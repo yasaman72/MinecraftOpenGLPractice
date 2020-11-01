@@ -1,14 +1,12 @@
 #include <math.h>
 
-//#include <glm/glm.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
-//#include <glm/gtc/type_ptr.hpp>
-
 #include "GLWindow.h"
 #include "Bitmap.h"
 #include "GL/glew.h"
 #include "PerlinNoise.h"
-//#include "Shader.h"
+#include "PerlinNoise.h"
+#include "glm/glm.hpp"
+#include "glm/vec3.hpp"
 
 #include <iostream>
 
@@ -18,6 +16,7 @@ using namespace std;
 
 #define VERTICES		24
 #define INDICES			36
+#define CLOUDAMOUNT		200
 
 #define BUFFER_OFFSET(i) ((void*)(i))
 
@@ -74,47 +73,178 @@ double  fStartY;
 double  fHor;
 double  fVer;
 
-static void MousePosCallback(GLFWwindow* window, double xpos, double ypos)
+float cloudXPosMultiplier = 0.0f;
+
+float	vert[] = { -0.5,-0.5,0.5, 0.5,-0.5,0.5f, 0.5,0.5,0.5, -0.5,0.5,0.5, -0.5,-0.5,-0.5, 0.5,-0.5,-0.5f, 0.5,0.5,-0.5, -0.5,0.5,-0.5 };
+float	uv[] = { 0.25,0.0, 0.5,0.0, 0.5,0.33, 0.25,0.33, 0.75,0.33, 0.75,0.66, 0.5,0.66, 0.5,0.33, 0.5,1.0, 0.25,1.0, 0.25,0.66, 0.5,0.66, 0.0,0.66, 0.0,0.33, 0.25,0.33, 0.25,0.66, 0.25,0.33, 0.5,0.33, 0.5,0.66, 0.25,0.66, 1.0,0.33, 1.0,0.66, 0.75,0.66, 0.75,0.33 };
+int		index[] = { 0,1,2,3, 1,5,6,2, 5,4,7,6, 4,0,3,7, 3,2,6,7, 1,0,4,5 };
+float	uvsky[] = { 0.0,0.33, 0.25,0.33, 0.25,0.66, 0.0,0.66, 0.25,0.33, 0.5,0.33, 0.5,0.66, 0.25,0.66, 0.5,0.33, 0.75,0.33, 0.75,0.66, 0.5,0.66, 0.75,0.33, 1.0,0.33, 1.0,0.66, 0.75,0.66, 0.25,1.0, 0.25,0.66, 0.5,0.66, 0.5,1.0, 0.25,0.0, 0.5,0.0, 0.5,0.33, 0.25,0.33 };
+float cloudStartPositions[CLOUDAMOUNT][3];
+float cloudScales[CLOUDAMOUNT][2];
+
+
+bool firstMouse = true;
+float yaw = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+float pitch = 0.0f;
+float lastX = 800.0f / 2.0;
+float lastY = 600.0 / 2.0;
+
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+
+void Mouse_Callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (bMouseDown) {
-		fHor += (xpos - fStartX) / 1250.0;
-		fStartX = xpos;
-		fVer += (ypos - fStartY) / 1250.0;
-		fStartY = ypos;
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	lastX = xpos;
+	lastY = ypos;
+
+	float sensitivity = 0.1f; // change this value to your liking
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+	// make sure that when pitch is out of bounds, screen doesn't get flipped
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.y = sin(glm::radians(pitch));
+	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	cameraFront = glm::normalize(front);
+}
+
+void processInput(GLFWwindow* window)
+{
+	const float cameraSpeed = 0.5f; // adjust accordingly
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		cameraPos += cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		cameraPos -= cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+}
+
+
+void DrawGound(GLuint& cubeTexture, unsigned int& width, unsigned int& height, unsigned char* pData)
+{
+	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glBindTexture(GL_TEXTURE_2D, cubeTexture);
+
+	for (unsigned int x = 0; x < width; x++) {
+		for (unsigned int z = 0; z < height; z++) {
+			glPushMatrix();
+
+			// Translate the cube to the position defined by the grid(x,z) and the perlin noise (y)
+			glTranslatef(-0.5f + (float)x - (float)width / 2.0f, -2.5f - (float)pData[z * height + x], -0.5f - float(z) + (float)height / 2.0f);
+
+			// This function will draw the complete buffer
+			glDrawElements(GL_TRIANGLES, INDICES, GL_UNSIGNED_SHORT, BUFFER_OFFSET(0));
+			glPopMatrix();
+		}
+	}
+
+	glPopMatrix();
+}
+
+void GenerateCloudStartPosition()
+{
+	for (size_t i = 0; i < CLOUDAMOUNT; i++)
+	{
+		cloudStartPositions[i][0] = -300 + (rand() % 600);
+		cloudStartPositions[i][1] = 10 + (rand() % 50);
+		cloudStartPositions[i][2] = -200 + (rand() % 300);
+
 	}
 }
 
-void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+void GenerateCloudScale()
 {
-	if (button == GLFW_MOUSE_BUTTON_LEFT) {
-		if (action == GLFW_PRESS) {
-			glfwGetCursorPos(window, &fStartX, &fStartY);
-			bMouseDown = true;
-		}
-		else {
-			bMouseDown = false;
-		}
+	for (size_t i = 0; i < CLOUDAMOUNT; i++)
+	{
+		cloudScales[i][0] = 10 + (rand() % 20);
+		cloudScales[i][1] = 5 + (rand() % 25);
 	}
 }
+
+void DrawCloud(GLuint& cloudTexture, float cloudStartPosition[3], float cloudScale[2])
+{
+	glPushMatrix();
+	glTranslatef(cloudStartPosition[0] + cloudXPosMultiplier, cloudStartPosition[1], cloudStartPosition[2]);
+	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+	glScalef(cloudScale[0], 2.0f, cloudScale[1]);
+	glCullFace(GL_BACK);
+
+	glEnable(GL_TEXTURE_2D);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glBindTexture(GL_TEXTURE_2D, cloudTexture);
+
+	glBegin(GL_QUADS);
+	for (int i = 0; i < 24; i++) {
+		glTexCoord2f(uvsky[i * 2], uvsky[i * 2 + 1]);
+		glVertex3f(vert[index[i] * 3], vert[index[i] * 3 + 1], vert[index[i] * 3 + 2]);
+	}
+
+	glEnd();
+
+	glPopMatrix();
+}
+
+void DrawSkyBox(GLuint& skyTexture)
+{
+	glPushMatrix();
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glScalef(1100.0f, 1100.0f, 1100.0f);
+	glCullFace(GL_FRONT);
+
+	glBindTexture(GL_TEXTURE_2D, skyTexture);
+	glBegin(GL_QUADS);
+	for (int i = 0; i < 24; i++) {
+		glTexCoord2f(uvsky[i * 2], uvsky[i * 2 + 1]);
+		glVertex3f(vert[index[i] * 3], vert[index[i] * 3 + 1], vert[index[i] * 3 + 2]);
+	}
+	glEnd();
+
+	glScalef(1.0f / 1100.0f, 1.0f / 1100.0f, 1.0f / 1100.0f);
+	glPopMatrix();
+}
+
+
+
 
 // --------------------------------------------------------------------------------
 
 int main(void)
 {
-	GLWindow window(640, 480, "Minecraft Project");
+	GLWindow window(1660, 900, "Minecraft Project");
 	if (window.Init() == false) exit(EXIT_FAILURE);
 
-	glfwSetCursorPosCallback(window.m_Window, MousePosCallback);
-	glfwSetMouseButtonCallback(window.m_Window, MouseButtonCallback);
-
-	// shader
-	// Shader testShader("res/shaders/Basic.Shader", "res/shaders/Transform.fShader");
+	glfwSetCursorPosCallback(window.m_Window, Mouse_Callback);
 
 
 	GLuint	skyTexture;
+	GLuint	cloudTexture;
 
 	GLuint	cubeTexture;
-	GLfloat aspect = (GLfloat)640 / 480;
+	GLfloat aspect = (GLfloat)1280 / 720;
 
 	GLfloat angle = 0.0f;
 
@@ -122,13 +252,16 @@ int main(void)
 	glEnable(GL_DEPTH_TEST);
 	//	glEnable(GL_CULL_FACE);
 	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
 	glShadeModel(GL_FLAT);
 
 	// The Texture
 
 	CBitmap* pBitmap = new CBitmap();
-	pBitmap->LoadFromFile("Bitmap/cube2.jpg");
+	pBitmap->LoadFromFile("Bitmap/dirt.jpg");
 
 	glGenTextures(1, &cubeTexture);
 	glBindTexture(GL_TEXTURE_2D, cubeTexture);
@@ -216,8 +349,8 @@ int main(void)
 
 	// Define the dimension of the grid
 
-	unsigned int m_nWidth = 128;
-	unsigned int m_nHeight = 128;
+	unsigned int m_nWidth = 200;
+	unsigned int m_nHeight = 200;
 
 	unsigned char* m_pData = (unsigned char*)malloc(m_nWidth * m_nHeight);
 
@@ -241,10 +374,24 @@ int main(void)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pSky->m_nWidth, pSky->m_nHeight, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pSky->m_pBytes);
 	delete(pSky);
 
-	float	vert[] = { -0.5,-0.5,0.5, 0.5,-0.5,0.5f, 0.5,0.5,0.5, -0.5,0.5,0.5, -0.5,-0.5,-0.5, 0.5,-0.5,-0.5f, 0.5,0.5,-0.5, -0.5,0.5,-0.5 };
-	float	uv[] = { 0.25,0.0, 0.5,0.0, 0.5,0.33, 0.25,0.33, 0.75,0.33, 0.75,0.66, 0.5,0.66, 0.5,0.33, 0.5,1.0, 0.25,1.0, 0.25,0.66, 0.5,0.66, 0.0,0.66, 0.0,0.33, 0.25,0.33, 0.25,0.66, 0.25,0.33, 0.5,0.33, 0.5,0.66, 0.25,0.66, 1.0,0.33, 1.0,0.66, 0.75,0.66, 0.75,0.33 };
-	int		index[] = { 0,1,2,3, 1,5,6,2, 5,4,7,6, 4,0,3,7, 3,2,6,7, 1,0,4,5 };
-	float	uvsky[] = { 0.0,0.33, 0.25,0.33, 0.25,0.66, 0.0,0.66, 0.25,0.33, 0.5,0.33, 0.5,0.66, 0.25,0.66, 0.5,0.33, 0.75,0.33, 0.75,0.66, 0.5,0.66, 0.75,0.33, 1.0,0.33, 1.0,0.66, 0.75,0.66, 0.25,1.0, 0.25,0.66, 0.5,0.66, 0.5,1.0, 0.25,0.0, 0.5,0.0, 0.5,0.33, 0.25,0.33 };
+
+
+	// could
+	CBitmap* pCloud = new CBitmap();
+	pCloud->LoadFromFile("Bitmap/could.jpg");
+
+	glGenTextures(1, &cloudTexture);
+	glBindTexture(GL_TEXTURE_2D, cloudTexture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pCloud->m_nWidth, pCloud->m_nHeight, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pCloud->m_pBytes);
+	delete(pCloud);
+
+
 
 	// Fill the grid with values from the noise function
 
@@ -253,13 +400,17 @@ int main(void)
 			double x = (double)j / ((double)m_nWidth);
 			double y = (double)i / ((double)m_nHeight);
 
-			double n = pn.noise(5 * x, 5 * y, 0.8);
+			double n = pn.noise(5 * x, 5 * y, 0.8) * pn.noise(10 * x, 10 * y, 0.2);
 
-			m_pData[inc] = (unsigned char)floor(26 * n);
+			m_pData[inc] = (unsigned char)floor(30 * n);
 
 			inc++;
 		}
 	}
+
+	GenerateCloudStartPosition();
+	GenerateCloudScale();
+
 
 	while (window.IsRunning()) {
 
@@ -272,85 +423,25 @@ int main(void)
 		glLoadIdentity();
 		gluLookAt(0.0f, 0.8f, 8.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
+		
+		processInput(window.m_Window);
 
-		// looking
-		//float px = sin(fHor) * cos(fVer);
-		//float py = sin(fVer);
-		//float pz = cos(fHor) * cos(fVer);
-		//gluLookAt(0.0f, 0.0f, 0.0f, px, py, pz, 0.0f, 1.0f, 0.0f);
-
+		//gluLookAt(-cameraX, 0.0f, -cameraZ, px, py, pz, 0.0f, 1.0f, 0.0f);
+		gluLookAt(cameraPos.x, cameraPos.y, cameraPos.z, (cameraFront + cameraPos).x, (cameraFront + cameraPos).y, (cameraFront + cameraPos).z, cameraUp.x, cameraUp.y, cameraUp.z);
 
 
-		//glPushMatrix();
+		// skybox
+		DrawSkyBox(skyTexture);
 
-		// Assign the Texture
+		// ground
+		DrawGound(cubeTexture, m_nWidth, m_nHeight, m_pData);
 
-		glPushMatrix();
-		glTranslatef(0.0f, 0.0f, -56.0f);
-		glRotatef(angle, 0.0f, 1.0f, 0.0f);		// Rotate around the y axis
 
-	    // skybox
-		glColor3f(1.0f, 1.0f, 1.0f);
-		glScalef(1100.0f, 1100.0f, 1100.0f);
-		glCullFace(GL_FRONT);
-
-		glBindTexture(GL_TEXTURE_2D, skyTexture);
-		glBegin(GL_QUADS);
-		for (int i = 0; i < 24; i++) {
-			glTexCoord2f(uvsky[i * 2], uvsky[i * 2 + 1]);
-			glVertex3f(vert[index[i] * 3], vert[index[i] * 3 + 1], vert[index[i] * 3 + 2]);
-		}
-		glEnd();
-
-		glScalef(1.0f / 1100.0f, 1.0f / 1100.0f, 1.0f / 1100.0f);
-		// skybox end
-
-		// cube test 
-
-		// // create transformations
-		//glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-		//transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-		//transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-
-		//// get matrix's uniform location and set matrix
-		//testShader.use();
-		//unsigned int transformLoc = glGetUniformLocation(testShader.ID, "transform");
-		//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
-
-		glTranslatef(-0.5f, -10.0f, -5.0f);		
-		glColor3f(1.0f, 1.0f, 1.0f);
-		glScalef(10.0f, 10.0f, 10.0f);
-		glCullFace(GL_BACK);
-
-		glBindTexture(GL_TEXTURE_2D, skyTexture);
-		glBegin(GL_QUADS);
-		for (int i = 0; i < 24; i++) {
-			glTexCoord2f(uvsky[i * 2], uvsky[i * 2 + 1]);
-			glVertex3f(vert[index[i] * 3], vert[index[i] * 3 + 1], vert[index[i] * 3 + 2]);
-		}
-
-		glEnd();
-
-		glScalef(1.0f / 10.0f, 1.0f / 10.0f, 1.0f / 10.0f);
-		glTranslatef(0.5f, 10.0f, 5.0f);
-
-		// cube test end
-
-		glEnable(GL_TEXTURE_2D);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-		glBindTexture(GL_TEXTURE_2D, cubeTexture);
-
-		for (unsigned int x = 0; x < m_nWidth; x++) {
-			for (unsigned int z = 0; z < m_nHeight; z++) {
-				glPushMatrix();
-
-				// Translate the cube to the position defined by the grid(x,z) and the perlin noise (y)
-				glTranslatef(-0.5f + (float)x - (float)m_nWidth / 2.0f, -2.5f - (float)m_pData[z * m_nHeight + x], -0.5f - float(z) + (float)m_nHeight / 2.0f);
-
-				// This function will draw the complete buffer
-				glDrawElements(GL_TRIANGLES, INDICES, GL_UNSIGNED_SHORT, BUFFER_OFFSET(0));
-				glPopMatrix();
-			}
+		// rendering transparent objects ======
+		// cloud
+		for (int x = 0; x < CLOUDAMOUNT; x++)
+		{
+			DrawCloud(cloudTexture, cloudStartPositions[x], cloudScales[x]);
 		}
 
 		glPopMatrix();
@@ -358,8 +449,10 @@ int main(void)
 		glTranslatef(-0.5f, -10.0f, 5.0f);
 
 		angle++;
+		cloudXPosMultiplier += 0.05f;
 		//if (angle > 360) angle = 0;
 
+		Sleep(30);
 		window.Present();
 	}
 

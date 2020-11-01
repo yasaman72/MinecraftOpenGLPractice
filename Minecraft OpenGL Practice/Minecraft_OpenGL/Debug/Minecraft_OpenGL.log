@@ -1,12 +1,16 @@
-﻿  Shader.cpp
-E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\src\Shader.cpp(43,40): warning C4101: 'e': unreferenced local variable
-  main.cpp
-E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(63,41): warning C4305: 'initializing': truncation from 'double' to 'float'
-E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(245,264): warning C4305: 'initializing': truncation from 'double' to 'float'
-E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(247,267): warning C4305: 'initializing': truncation from 'double' to 'float'
-  Generating Code...
-  LINK : E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\Debug\Minecraft_OpenGL.exe not found or not built by the last incremental link; performing full link
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
-glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\Debug\vc120.pdb'; linking object as if no debug info
-  Minecraft_OpenGL.vcxproj -> E:\CGL\BA6\Programming\Minecraft OpenGL Practice Project\Minecraft OpenGL Practice\Minecraft_OpenGL\Debug\Minecraft_OpenGL.exe
+﻿  main.cpp
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(62,41): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(79,263): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(81,266): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(101,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(102,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(106,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(107,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(108,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(109,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(172,36): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(173,34): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(174,36): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(183,26): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\src\main.cpp(184,25): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  Minecraft_OpenGL.vcxproj -> D:\Projects\MinecraftOpenGLPractice\Minecraft OpenGL Practice\Minecraft_OpenGL\Debug\Minecraft_OpenGL.exe
